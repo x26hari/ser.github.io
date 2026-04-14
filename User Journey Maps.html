@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>User Journey Maps</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: #EAEFF1; padding: 2rem; color: #1A2E35; }
+    .page { max-width: 1200px; margin: 0 auto; }
+
+    .doc-header { margin-bottom: 32px; }
+    .doc-header h1 { font-size: 22px; font-weight: 800; color: #1A2E35; }
+    .doc-header p { font-size: 13px; color: #78909C; margin-top: 4px; }
+
+    .map { background: white; border-radius: 16px; padding: 28px; margin-bottom: 40px; box-shadow: 0 2px 16px rgba(0,0,0,0.07); overflow-x: auto; }
+
+    .map-header { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 24px; padding-bottom: 20px; border-bottom: 2px solid #ECEFF1; }
+    .persona-badge { border-radius: 10px; padding: 10px 16px; min-width: 160px; }
+    .persona-badge .role { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; opacity: 0.7; }
+    .persona-badge .name { font-size: 16px; font-weight: 800; margin-top: 2px; }
+    .persona-badge .detail { font-size: 11px; margin-top: 4px; opacity: 0.8; line-height: 1.4; }
+    .scenario { flex: 1; }
+    .scenario h3 { font-size: 14px; font-weight: 700; color: #37474F; margin-bottom: 4px; }
+    .scenario p { font-size: 12px; color: #78909C; line-height: 1.5; }
+
+    .row-label { display: flex; align-items: center; justify-content: flex-end; padding-right: 12px; }
+    .row-label span { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #90A4AE; text-align: right; line-height: 1.4; }
+
+    .phase-header { border-radius: 8px; padding: 8px 10px; text-align: center; }
+    .phase-header .day { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.7; }
+    .phase-header .phase-name { font-size: 12px; font-weight: 800; margin-top: 2px; line-height: 1.3; }
+
+    .cell { border-radius: 8px; padding: 10px 12px; font-size: 12px; line-height: 1.5; min-height: 60px; display: flex; align-items: flex-start; }
+    .cell p { font-size: 12px; line-height: 1.5; }
+
+    /* Row colours */
+    .cell-action  { background: #FFFDE7; border: 1.5px solid #FFF9C4; color: #37474F; }
+    .cell-feeling { background: #FCE4EC; border: 1.5px solid #F8BBD9; color: #37474F; }
+    .cell-f1      { background: #E0F7FA; border: 1.5px solid #80DEEA; }
+    .cell-f2      { background: #E8EAF6; border: 1.5px solid #C5CAE9; }
+    .cell-both    { background: #E8F5E9; border: 1.5px solid #A5D6A7; }
+    .cell-data    { background: #F5F5F5; border: 1.5px solid #E0E0E0; color: #546E7A; }
+
+    .data-item { font-size: 11px; color: #546E7A; line-height: 1.5; padding: 2px 0; border-bottom: 1px solid #EEEEEE; }
+    .data-item:last-child { border-bottom: none; }
+    .data-item strong { color: #37474F; font-weight: 600; }
+
+    .tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+    .tag { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; padding: 2px 6px; border-radius: 4px; }
+    .tag-class { background: #B2EBF2; color: #006064; }
+    .tag-sent  { background: #B2DFDB; color: #00695C; }
+    .tag-fore  { background: #BBDEFB; color: #1565C0; }
+    .tag-clust { background: #E1BEE7; color: #6A1B9A; }
+    .tag-rec   { background: #FFE0B2; color: #E65100; }
+    .tag-f1    { background: #0097A7; color: white; }
+    .tag-f2    { background: #1A237E; color: white; }
+
+    .feature-legend { display: flex; gap: 16px; margin-top: 20px; padding-top: 16px; border-top: 1px solid #ECEFF1; flex-wrap: wrap; }
+    .fl-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #546E7A; }
+    .fl-dot { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+
+    .grid { display: grid; grid-template-columns: 100px repeat(6, 1fr); gap: 8px; }
+    .grid-row { display: contents; }
+    .mb { margin-bottom: 8px; }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <div class="doc-header">
+    <h1>User Journey Maps — A Week in the Life</h1>
+    <p>Two perspectives mapped across the same week. The Wednesday exchange appears in both maps — it is the same moment seen from each side.</p>
+  </div>
+
+  <!-- ══════════════════════════════════
+       MAP 1 — THE AWAY PERSON
+  ══════════════════════════════════ -->
+  <div class="map">
+    <div class="map-header">
+      <div class="persona-badge" style="background:#E0F7FA; color:#004D70;">
+        <div class="role">Persona 1</div>
+        <div class="name">The Away Person</div>
+        <div class="detail">25, studying abroad. Family in another country. Feels guilty for not calling more.</div>
+      </div>
+      <div class="scenario">
+        <h3>Scenario</h3>
+        <p>A typical week. The family chat has been quiet — mostly logistics for several days. The away person wants to connect but doesn't know how to start something real. Both features come into play across the week.</p>
+      </div>
+    </div>
+
+    <div class="grid">
+
+      <!-- Phase headers -->
+      <div></div>
+      <div class="phase-header" style="background:#F5F5F5;"><div class="day">Mon</div><div class="phase-name" style="color:#546E7A;">Quiet period</div></div>
+      <div class="phase-header" style="background:#E0F7FA;"><div class="day">Tue</div><div class="phase-name" style="color:#006064;">Prompt surfaces</div></div>
+      <div class="phase-header" style="background:#B2EBF2;"><div class="day">Wed</div><div class="phase-name" style="color:#006064;">Conversation opens</div></div>
+      <div class="phase-header" style="background:#E8EAF6;"><div class="day">Thu</div><div class="phase-name" style="color:#1A237E;">Memory moment</div></div>
+      <div class="phase-header" style="background:#E8EAF6;"><div class="day">Fri</div><div class="phase-name" style="color:#1A237E;">Vault save</div></div>
+      <div class="phase-header" style="background:#F3E5F5;"><div class="day">Sun</div><div class="phase-name" style="color:#6A1B9A;">Weekly recap</div></div>
+
+      <!-- What they do -->
+      <div class="row-label mb"><span>What<br/>they do</span></div>
+      <div class="cell cell-action mb"><p>Checks family chat. Sees nothing new. Types "hope you're well" — deletes it. Puts phone down.</p></div>
+      <div class="cell cell-action mb"><p>Opens app during commute. Sees a prompt card: <em>"Your mum mentioned she started a new cooking class."</em></p></div>
+      <div class="cell cell-action mb"><p>Sends a voice note asking about the class. Gets a long reply — first real exchange in 10 days.</p></div>
+      <div class="cell cell-action mb"><p>Takes a photo of dinner, thinks of family. Shares it to the family chat with a short message.</p></div>
+      <div class="cell cell-action mb"><p>App flags the voice note exchange. Sees: <em>"Save this to your vault?"</em> Confirms.</p></div>
+      <div class="cell cell-action mb"><p>Receives weekly recap card. Sees the week summarised. Tags one more moment manually.</p></div>
+
+      <!-- What they feel -->
+      <div class="row-label mb"><span>What<br/>they feel</span></div>
+      <div class="cell cell-feeling mb"><p>Guilty. Wants to reach out but the blank chat feels like a barrier with no starting point.</p></div>
+      <div class="cell cell-feeling mb"><p>Surprised. The prompt gives something specific to respond to — pressure to "start something" is gone.</p></div>
+      <div class="cell cell-feeling mb"><p>Relieved and connected. The conversation felt natural, not forced or obligatory.</p></div>
+      <div class="cell cell-feeling mb"><p>A small moment of closeness — sharing from daily life without needing a reason to call.</p></div>
+      <div class="cell cell-feeling mb"><p>Good that the moment won't just scroll away. A little proud of it.</p></div>
+      <div class="cell cell-feeling mb"><p>Satisfied. The week had more connection than it felt like in the moment.</p></div>
+
+      <!-- System action -->
+      <div class="row-label mb"><span>System<br/>action</span></div>
+      <div class="cell cell-f1 mb">
+        <div><p>Monitors message stream. Detects drift: 4 days of logistics-only messages, frequency below baseline.</p>
+        <div class="tags"><span class="tag tag-class">Classification</span><span class="tag tag-fore">Forecasting</span><span class="tag tag-f1">F1</span></div></div>
+      </div>
+      <div class="cell cell-f1 mb">
+        <div><p>Surfaces a specific piece of recent family context as a conversation anchor. Timed to a moment of likely openness.</p>
+        <div class="tags"><span class="tag tag-rec">Recommendation</span><span class="tag tag-clust">Clustering</span><span class="tag tag-f1">F1</span></div></div>
+      </div>
+      <div class="cell cell-f1 mb">
+        <div><p>Detects depth shift after the prompt. Logs outcome: prompt led to deeper exchange. Updates recommendation model.</p>
+        <div class="tags"><span class="tag tag-sent">Sentiment</span><span class="tag tag-clust">Clustering</span></div></div>
+      </div>
+      <div class="cell cell-f2 mb">
+        <div><p>Classifies shared photo as a Ritual moment. Stores in content pool for vault and recap use.</p>
+        <div class="tags"><span class="tag tag-class">Classification</span><span class="tag tag-f2">F2</span></div></div>
+      </div>
+      <div class="cell cell-f2 mb">
+        <div><p>Flags voice note exchange as emotionally significant (sentiment deviation from baseline). Prompts user to save. Waits for confirmation.</p>
+        <div class="tags"><span class="tag tag-sent">Sentiment</span><span class="tag tag-class">Classification</span><span class="tag tag-f2">F2</span></div></div>
+      </div>
+      <div class="cell cell-both mb">
+        <div><p>Generates weekly recap of classified moments. Surfaces vault suggestions. Clusters content to detect emerging themes.</p>
+        <div class="tags"><span class="tag tag-clust">Clustering</span><span class="tag tag-f1">F1</span><span class="tag tag-f2">F2</span></div></div>
+      </div>
+
+      <!-- Data needed -->
+      <div class="row-label mb"><span>Data<br/>needed</span></div>
+      <div class="cell cell-data mb" style="flex-direction:column; gap:4px;">
+        <div class="data-item"><strong>Classified message history</strong> — past 7–30 days</div>
+        <div class="data-item"><strong>Personal frequency baseline</strong> — how often this user normally communicates</div>
+        <div class="data-item"><strong>Timestamps &amp; response delays</strong> — to measure drift</div>
+      </div>
+      <div class="cell cell-data mb" style="flex-direction:column; gap:4px;">
+        <div class="data-item"><strong>Family member's recent classified content</strong> — stories, rituals shared</div>
+        <div class="data-item"><strong>Past prompt outcomes</strong> — which prompts worked in similar contexts</div>
+        <div class="data-item"><strong>User activity pattern</strong> — time of day, app-open behaviour</div>
+      </div>
+      <div class="cell cell-data mb" style="flex-direction:column; gap:4px;">
+        <div class="data-item"><strong>New messages in real time</strong> — classified as they arrive</div>
+        <div class="data-item"><strong>Pre-prompt baseline</strong> — conversation depth before the prompt triggered</div>
+        <div class="data-item"><strong>Prompt record</strong> — what was shown and when</div>
+      </div>
+      <div class="cell cell-data mb" style="flex-direction:column; gap:4px;">
+        <div class="data-item"><strong>Shared media &amp; message content</strong> — the photo and its context</div>
+        <div class="data-item"><strong>Classification model</strong> — to assign message type</div>
+        <div class="data-item"><strong>Existing vault content</strong> — to avoid duplicates</div>
+      </div>
+      <div class="cell cell-data mb" style="flex-direction:column; gap:4px;">
+        <div class="data-item"><strong>Full voice note exchange</strong> — the thread being evaluated</div>
+        <div class="data-item"><strong>User's sentiment baseline</strong> — to calculate emotional deviation</div>
+        <div class="data-item"><strong>User's vault preferences</strong> — consent and privacy settings</div>
+      </div>
+      <div class="cell cell-data mb" style="flex-direction:column; gap:4px;">
+        <div class="data-item"><strong>Full week's classified &amp; sentiment-scored content</strong></div>
+        <div class="data-item"><strong>All vault items from this week</strong> — confirmed and suggested</div>
+        <div class="data-item"><strong>Historical vault data</strong> — to surface year-ago memories</div>
+      </div>
+
+    </div><!-- /grid -->
+
+    <!-- Emotion arc -->
+    <div style="display:grid; grid-template-columns: 100px 1fr; gap:8px; margin-top:16px; align-items:center;">
+      <div style="text-align:right; padding-right:12px;">
+        <span style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:#90A4AE;">Emotional arc</span>
+      </div>
+      <svg viewBox="0 0 600 68" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:58px;">
+        <defs><linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" style="stop-color:#CFD8DC"/><stop offset="35%" style="stop-color:#0097A7"/>
+          <stop offset="55%" style="stop-color:#00BCD4"/><stop offset="75%" style="stop-color:#1A237E"/>
+          <stop offset="100%" style="stop-color:#7B1FA2"/>
+        </linearGradient></defs>
+        <line x1="0" y1="38" x2="600" y2="38" stroke="#ECEFF1" stroke-width="1.5" stroke-dasharray="4,4"/>
+        <path d="M 0,50 C 60,50 80,50 100,50 C 140,50 165,18 200,16 C 235,14 265,14 300,14 C 335,14 360,26 400,26 C 430,26 455,16 485,14 C 510,12 545,14 600,12"
+              fill="none" stroke="url(#g1)" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="0"   cy="50" r="4" fill="#CFD8DC"/>
+        <circle cx="100" cy="50" r="4" fill="#CFD8DC"/>
+        <circle cx="200" cy="16" r="4" fill="#0097A7"/>
+        <circle cx="300" cy="14" r="4" fill="#00BCD4"/>
+        <circle cx="400" cy="26" r="4" fill="#1A237E"/>
+        <circle cx="500" cy="14" r="4" fill="#1A237E"/>
+        <circle cx="600" cy="12" r="4" fill="#7B1FA2"/>
+        <text x="0"   y="64" font-size="9" fill="#90A4AE" font-family="Inter" text-anchor="middle">Guilty</text>
+        <text x="100" y="64" font-size="9" fill="#90A4AE" font-family="Inter" text-anchor="middle">Stuck</text>
+        <text x="200" y="64" font-size="9" fill="#0097A7" font-family="Inter" text-anchor="middle">Curious</text>
+        <text x="300" y="64" font-size="9" fill="#0097A7" font-family="Inter" text-anchor="middle">Connected</text>
+        <text x="400" y="64" font-size="9" fill="#546E7A" font-family="Inter" text-anchor="middle">Present</text>
+        <text x="500" y="64" font-size="9" fill="#1A237E" font-family="Inter" text-anchor="middle">Seen</text>
+        <text x="600" y="64" font-size="9" fill="#7B1FA2" font-family="Inter" text-anchor="middle">Satisfied</text>
+      </svg>
+    </div>
+
+    <div class="feature-legend">
+      <div class="fl-item"><div class="fl-dot" style="background:#E0F7FA;border:1.5px solid #80DEEA;"></div> F1: Smart Conversation Recommendations</div>
+      <div class="fl-item"><div class="fl-dot" style="background:#E8EAF6;border:1.5px solid #C5CAE9;"></div> F2: Family Recap &amp; Memory Vault</div>
+      <div class="fl-item"><div class="fl-dot" style="background:#FFFDE7;border:1.5px solid #FFF9C4;"></div> User action</div>
+      <div class="fl-item"><div class="fl-dot" style="background:#FCE4EC;border:1.5px solid #F8BBD9;"></div> Emotional state</div>
+      <div class="fl-item"><div class="fl-dot" style="background:#F5F5F5;border:1.5px solid #E0E0E0;"></div> Data needed</div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════
+       MAP 2 — FAMILY AT HOME
+  ══════════════════════════════════ -->
+  <div class="map">
+    <div class="map-header">
+      <div class="persona-badge" style="background:#EDE7F6; color:#4A148C;">
+        <div class="role">Persona 2</div>
+        <div class="name">The Family at Home</div>
+        <div class="detail">63, parent. Child lives abroad. Feels out of the loop. Doesn't always know how to reach across the distance.</div>
+      </div>
+      <div class="scenario">
+        <h3>Scenario</h3>
+        <p>The same week, from the other side. The parent checks in passively and waits. The service gives them a richer sense of what's going on in their child's life — without requiring new behaviour from either side.</p>
+      </div>
+    </div>
+
+    <div class="grid">
+
+      <!-- Phase headers -->
+      <div></div>
+      <div class="phase-header" style="background:#F5F5F5;"><div class="day">Mon</div><div class="phase-name" style="color:#546E7A;">Passive check-in</div></div>
+      <div class="phase-header" style="background:#EDE7F6;"><div class="day">Tue</div><div class="phase-name" style="color:#4A148C;">Ambient awareness</div></div>
+      <div class="phase-header" style="background:#D1C4E9;"><div class="day">Wed</div><div class="phase-name" style="color:#4A148C;">Real connection</div></div>
+      <div class="phase-header" style="background:#E8EAF6;"><div class="day">Thu</div><div class="phase-name" style="color:#1A237E;">Moment included</div></div>
+      <div class="phase-header" style="background:#E8EAF6;"><div class="day">Fri</div><div class="phase-name" style="color:#1A237E;">Memory preserved</div></div>
+      <div class="phase-header" style="background:#F3E5F5;"><div class="day">Sun</div><div class="phase-name" style="color:#6A1B9A;">Weekly recap</div></div>
+
+      <!-- What they do -->
+      <div class="row-label mb"><span>What<br/>they do</span></div>
+      <div class="cell cell-action mb"><p>Sends a morning emoji to the group chat. Checks if child has been active. Nothing new. Puts phone down.</p></div>
+      <div class="cell cell-action mb"><p>Opens the app. Sees a quiet digest of what the child has been sharing recently — no call needed to feel up to date.</p></div>
+      <div class="cell cell-action mb"><p>Child sends a voice note about the cooking class. Parent sends a long reply — first real exchange in 10 days.</p></div>
+      <div class="cell cell-action mb"><p>Receives a photo of child's dinner. Replies with a heart and a short message.</p></div>
+      <div class="cell cell-action mb"><p>Gets a notification: <em>"A moment from this week has been saved to your vault."</em> Opens it. Listens again.</p></div>
+      <div class="cell cell-action mb"><p>Receives weekly recap. Also sees: <em>"One year ago, [child] shared their first week abroad."</em> Sends it back to the chat.</p></div>
+
+      <!-- What they feel -->
+      <div class="row-label mb"><span>What<br/>they feel</span></div>
+      <div class="cell cell-feeling mb"><p>Passive. Waiting. Drops something in the chat to signal presence but doesn't know what's happening in the child's life.</p></div>
+      <div class="cell cell-feeling mb"><p>More informed than usual. Has something real to respond to — not just "how are you?"</p></div>
+      <div class="cell cell-feeling mb"><p>Warm and present. The conversation felt like it came naturally rather than out of obligation.</p></div>
+      <div class="cell cell-feeling mb"><p>Included. The small photo makes the distance feel smaller — a glimpse into daily life.</p></div>
+      <div class="cell cell-feeling mb"><p>The moment has been caught before it could scroll away. Feels like something worth keeping.</p></div>
+      <div class="cell cell-feeling mb"><p>Nostalgic and newly connected. The year-ago memory sparks a real moment right now.</p></div>
+
+      <!-- System action -->
+      <div class="row-label mb"><span>System<br/>action</span></div>
+      <div class="cell cell-f1 mb">
+        <div><p>Monitors parent's usage patterns. Detects passive check-in with no engagement. Prepares ambient digest for next open.</p>
+        <div class="tags"><span class="tag tag-fore">Forecasting</span><span class="tag tag-f1">F1</span></div></div>
+      </div>
+      <div class="cell cell-f1 mb">
+        <div><p>Surfaces a digest of child's recent classified content — rituals and stories shared — giving context without requiring action from the child.</p>
+        <div class="tags"><span class="tag tag-class">Classification</span><span class="tag tag-rec">Recommendation</span><span class="tag tag-f1">F1</span></div></div>
+      </div>
+      <div class="cell cell-f1 mb">
+        <div><p>Detects depth shift: message class ratio changes significantly. Logs as a successful connection event. Updates clustering model.</p>
+        <div class="tags"><span class="tag tag-sent">Sentiment</span><span class="tag tag-clust">Clustering</span></div></div>
+      </div>
+      <div class="cell cell-f2 mb">
+        <div><p>Classifies the shared photo as a Ritual moment. Stores in family content pool. No vault suggestion yet — builds context.</p>
+        <div class="tags"><span class="tag tag-class">Classification</span><span class="tag tag-f2">F2</span></div></div>
+      </div>
+      <div class="cell cell-f2 mb">
+        <div><p>Vault item confirmed by away person. Notifies parent. Assigns category: Story / Connection moment. Both users can access.</p>
+        <div class="tags"><span class="tag tag-class">Classification</span><span class="tag tag-sent">Sentiment</span><span class="tag tag-f2">F2</span></div></div>
+      </div>
+      <div class="cell cell-both mb">
+        <div><p>Generates weekly recap + year-ago memory for both users. Clusters week's moments into themes. Delivers simultaneously.</p>
+        <div class="tags"><span class="tag tag-clust">Clustering</span><span class="tag tag-fore">Forecasting</span><span class="tag tag-f1">F1</span><span class="tag tag-f2">F2</span></div></div>
+      </div>
+
+      <!-- Data needed -->
+      <div class="row-label mb"><span>Data<br/>needed</span></div>
+      <div class="cell cell-data mb" style="flex-direction:column; gap:4px;">
+        <div class="data-item"><strong>Parent's app usage history</strong> — frequency and engagement patterns</div>
+        <div class="data-item"><strong>Family chat activity log</strong> — who posted what and when</div>
+        <div class="data-item"><strong>Personal communication baseline</strong> — what "normal" looks like for this user</div>
+      </div>
+      <div class="cell cell-data mb" style="flex-direction:column; gap:4px;">
+        <div class="data-item"><strong>Child's classified message history</strong> — recent stories and rituals</div>
+        <div class="data-item"><strong>Sentiment scores</strong> — emotional tone of child's recent content</div>
+        <div class="data-item"><strong>Recency weighting</strong> — more recent content surfaced first</div>
+      </div>
+      <div class="cell cell-data mb" style="flex-direction:column; gap:4px;">
+        <div class="data-item"><strong>New messages classified in real time</strong></div>
+        <div class="data-item"><strong>Pre-exchange depth baseline</strong> — to measure the shift</div>
+        <div class="data-item"><strong>Historical prompt + outcome records</strong> — to update the model</div>
+      </div>
+      <div class="cell cell-data mb" style="flex-direction:column; gap:4px;">
+        <div class="data-item"><strong>Shared media content</strong> — the photo and surrounding messages</div>
+        <div class="data-item"><strong>Classification model</strong> — to assign message type</div>
+        <div class="data-item"><strong>Family content pool</strong> — for thematic grouping later</div>
+      </div>
+      <div class="cell cell-data mb" style="flex-direction:column; gap:4px;">
+        <div class="data-item"><strong>Vault item shared by away person</strong> — confirmed save</div>
+        <div class="data-item"><strong>Both users' notification preferences</strong></div>
+        <div class="data-item"><strong>Category labels from classification</strong> — to organise vault display</div>
+      </div>
+      <div class="cell cell-data mb" style="flex-direction:column; gap:4px;">
+        <div class="data-item"><strong>Full week's classified &amp; sentiment-scored content</strong></div>
+        <div class="data-item"><strong>All vault items with timestamps</strong></div>
+        <div class="data-item"><strong>Historical vault data</strong> — year-ago detection requires long-term storage</div>
+      </div>
+
+    </div><!-- /grid -->
+
+    <!-- Emotion arc -->
+    <div style="display:grid; grid-template-columns: 100px 1fr; gap:8px; margin-top:16px; align-items:center;">
+      <div style="text-align:right; padding-right:12px;">
+        <span style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:#90A4AE;">Emotional arc</span>
+      </div>
+      <svg viewBox="0 0 600 68" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:58px;">
+        <defs><linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" style="stop-color:#CFD8DC"/><stop offset="30%" style="stop-color:#7B1FA2"/>
+          <stop offset="50%" style="stop-color:#512DA8"/><stop offset="75%" style="stop-color:#1A237E"/>
+          <stop offset="100%" style="stop-color:#7B1FA2"/>
+        </linearGradient></defs>
+        <line x1="0" y1="38" x2="600" y2="38" stroke="#ECEFF1" stroke-width="1.5" stroke-dasharray="4,4"/>
+        <path d="M 0,52 C 50,52 75,52 100,52 C 140,52 165,22 200,20 C 235,18 265,12 300,12 C 335,12 360,20 400,20 C 430,20 455,14 485,12 C 512,10 548,10 600,8"
+              fill="none" stroke="url(#g2)" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="0"   cy="52" r="4" fill="#CFD8DC"/>
+        <circle cx="100" cy="52" r="4" fill="#CFD8DC"/>
+        <circle cx="200" cy="20" r="4" fill="#7B1FA2"/>
+        <circle cx="300" cy="12" r="4" fill="#512DA8"/>
+        <circle cx="400" cy="20" r="4" fill="#1A237E"/>
+        <circle cx="500" cy="12" r="4" fill="#1A237E"/>
+        <circle cx="600" cy="8"  r="4" fill="#7B1FA2"/>
+        <text x="0"   y="64" font-size="9" fill="#90A4AE" font-family="Inter" text-anchor="middle">Passive</text>
+        <text x="100" y="64" font-size="9" fill="#90A4AE" font-family="Inter" text-anchor="middle">Waiting</text>
+        <text x="200" y="64" font-size="9" fill="#7B1FA2" font-family="Inter" text-anchor="middle">Informed</text>
+        <text x="300" y="64" font-size="9" fill="#512DA8" font-family="Inter" text-anchor="middle">Connected</text>
+        <text x="400" y="64" font-size="9" fill="#546E7A" font-family="Inter" text-anchor="middle">Included</text>
+        <text x="500" y="64" font-size="9" fill="#1A237E" font-family="Inter" text-anchor="middle">Preserved</text>
+        <text x="600" y="64" font-size="9" fill="#7B1FA2" font-family="Inter" text-anchor="middle">Nostalgic</text>
+      </svg>
+    </div>
+
+    <div class="feature-legend">
+      <div class="fl-item"><div class="fl-dot" style="background:#E0F7FA;border:1.5px solid #80DEEA;"></div> F1: Smart Conversation Recommendations</div>
+      <div class="fl-item"><div class="fl-dot" style="background:#E8EAF6;border:1.5px solid #C5CAE9;"></div> F2: Family Recap &amp; Memory Vault</div>
+      <div class="fl-item"><div class="fl-dot" style="background:#FFFDE7;border:1.5px solid #FFF9C4;"></div> User action</div>
+      <div class="fl-item"><div class="fl-dot" style="background:#FCE4EC;border:1.5px solid #F8BBD9;"></div> Emotional state</div>
+      <div class="fl-item"><div class="fl-dot" style="background:#F5F5F5;border:1.5px solid #E0E0E0;"></div> Data needed</div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
